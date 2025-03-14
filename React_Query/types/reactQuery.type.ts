@@ -9,8 +9,9 @@ export enum QueryKeys {
   TODO = 'todo',
   IDEA = 'ideas',
   FAKE_QUERY_KEY = 'fake',
+  ADD_TODO = 'addTodo',
 }
-export const { POSTS, IDEA, TODO, FAKE_QUERY_KEY } = QueryKeys;
+export const { POSTS, IDEA, TODO, FAKE_QUERY_KEY, ADD_TODO } = QueryKeys;
 
 export enum FetchStatuses {
   FETCHING = 'fetching',

@@ -3,3 +3,9 @@ export interface PostCardsProps {
   title: string;
   id: number;
 }
+
+export interface PostData {
+  title: string;
+  completed: boolean;
+  userId: number;
+}
