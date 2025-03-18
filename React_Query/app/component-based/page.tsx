@@ -12,17 +12,19 @@ import {
   useIsFetching,
   useMutation,
   useMutationState,
+  usePrefetchQuery,
   useQueries,
   useQuery,
   useQueryClient,
   useSuspenseQueries,
+  useSuspenseQuery,
 } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { addTodo } from '@/apis/postApi';
 import axios, { AxiosError } from 'axios';
 import { fetchPosts } from '@/apis/graphQLClient';
 import { Button } from '@material-tailwind/react';
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, Suspense, lazy } from 'react';
 import { MutationGroupOption } from '@/types/rootLayout.type';
 import { FetchUsersProps, PaginationData, SelectType, User } from '@/types/componentBased.type';
 import { FAKE_QUERY_KEY, FETCHING, IDEA, POSTS, QueryKeys, TODO, ADD_TODO } from '@/types/reactQuery.type';
@@ -581,6 +583,79 @@ export default function page() {
     return data ? <Comments /> : <>loading...</>;
   }
 
+  // Prefetching & Router Integration
+  function PrefetchingRouterIntegration() {
+    const prefetchTodo = async () => await queryClient.prefetchQuery({ queryKey: ['todo'], queryFn: fetchPosts, staleTime: 5000 });
+
+    // 1
+    // const prefetchPosts = async () =>
+    //   queryClient.prefetchInfiniteQuery({
+    //     queryKey: ['posts'],
+    //     queryFn: fetchPosts,
+    //     getNextPageParam: data => data.page + 1,
+    //     initialPageParam: 1,
+    //     pages: 3 /* prefetch the first 3 pages */,
+    //   });
+
+    // 2
+    // const { data } = useQuery({ queryKey: ['posts'], queryFn: fetchPosts });
+    // useQuery({ queryKey: ['idea'], queryFn: fetchPosts }); // ignore the result
+    // function Comments() {
+    //   const { data } = useQuery({ queryKey: ['idea'], queryFn: fetchPosts });
+    //   return <>comments</>;
+    // }
+
+    // 3
+    // usePrefetchQuery({ queryKey: ['posts'], queryFn: fetchPosts });
+    // function Article() {
+    //   const { data } = useSuspenseQuery({ queryKey: ['idea'], queryFn: fetchPosts });
+    //   return <>Article</>;
+    // }
+
+    // 4
+    // const { data } = useQuery({
+    //   queryKey: ['article'],
+    //   queryFn: async function (...args) {
+    //     queryClient.prefetchQuery({ queryKey: ['posts'], queryFn: fetchPosts });
+    //     return () => Promise.resolve(5);
+    //   },
+    // });
+
+    // 5
+    // useEffect(
+    //   function () {
+    //     queryClient.prefetchQuery({ queryKey: ['idea'], queryFn: fetchPosts });
+    //   },
+    //   [queryClient]
+    // );
+
+    // 6
+    // const Comments = lazy(() => import('@/components/Comments'));
+    // const { data } = useQuery({
+    //   queryKey: ['posts'],
+    //   queryFn: async function () {
+    //     const posts = await fetchPosts();
+    //     const isExistId12 = posts.some(({ id }) => id === 12);
+    //     isExistId12 && queryClient.prefetchQuery({ queryKey: ['idea', 12], queryFn: fetchPosts });
+    //   },
+    // });
+
+    return (
+      <div onMouseEnter={prefetchTodo} onFocus={prefetchTodo}>
+        Prefetching & Router Integration
+        {/* <Comments /> */}
+        {/* <Suspense fallback='loading article'>
+          <Article />
+        </Suspense> */}
+        {/* {data?.some(({ id }) => id === 12) && (
+          <Suspense fallback='comment loading...'>
+            <Comments />
+          </Suspense>
+        )} */}
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* <TestSetQueryData /> */}
@@ -609,6 +684,7 @@ export default function page() {
       {/* <QueryCancelation /> */}
       {/* <Filters /> */}
       {/* <FlattenRequestWaterfall id={1} /> */}
+      {/* <PrefetchingRouterIntegration /> */}
     </div>
   );
 }
