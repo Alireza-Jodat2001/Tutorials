@@ -1,17 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { CustomQueryClientProviderProps } from '@/types/reactQuery.type';
-import { QueryClient, QueryClientProvider, HydrationBoundary } from '@tanstack/react-query';
+import { QueryClientProvider, HydrationBoundary } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/production';
+import { CustomQueryClientProviderProps } from '@/types/reactQuery.type';
+import getQueryClient from '@/utils/getQueryClient';
 
 const CustomHydrationBoundary = ({ state, children }: CustomQueryClientProviderProps) => {
-  const [queryClient] = useState(() => new QueryClient({ defaultOptions: { queries: { staleTime: 60 * 1000 } } }));
-
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={getQueryClient()}>
       <HydrationBoundary state={state}>{children}</HydrationBoundary>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 };

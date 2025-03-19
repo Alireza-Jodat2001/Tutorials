@@ -1,7 +1,7 @@
 'use client';
 
-import { fetchPosts } from '@/apis/graphQLClient';
 import { useQuery } from '@tanstack/react-query';
+import { fetchPosts } from '@/apis/graphQLClient';
 import NestedServerComponent from './NestedServerComponent';
 
 export default function Posts() {

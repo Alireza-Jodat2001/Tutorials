@@ -18,17 +18,23 @@ import {
   useQueryClient,
   useSuspenseQueries,
   useSuspenseQuery,
+  useQueryErrorResetBoundary,
 } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { addTodo } from '@/apis/postApi';
 import axios, { AxiosError } from 'axios';
 import { fetchPosts } from '@/apis/graphQLClient';
 import { Button } from '@material-tailwind/react';
-import { useEffect, useState, FormEvent, Suspense, lazy } from 'react';
+import { useEffect, useState, FormEvent, Suspense, lazy, useCallback } from 'react';
 import { MutationGroupOption } from '@/types/rootLayout.type';
 import { FetchUsersProps, PaginationData, SelectType, User } from '@/types/componentBased.type';
 import { FAKE_QUERY_KEY, FETCHING, IDEA, POSTS, QueryKeys, TODO, ADD_TODO } from '@/types/reactQuery.type';
 import dynamic from 'next/dynamic';
+import usePosts from '@/hooks/useTodos';
+import SuspendComponent from '@/components/SuspendComponent';
+import ErrorCompo from '@/components/Error';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export default function page() {
   const groupOptions = (queryKey: QueryKeys) => queryOptions({ queryKey: [queryKey], queryFn: fetchPosts });
@@ -656,6 +662,45 @@ export default function page() {
     );
   }
 
+  // Render Optimizations
+  function RenderOptimizations() {
+    const { data } = usePosts(useCallback(data => data.map(({ id }) => id)));
+    console.log(data);
+    return <>Render Optimizations</>;
+  }
+
+  // Default Query Function
+  function DefaultQueryFunction() {
+    const { data } = useQuery({ queryKey: ['/users/1'] });
+    console.log(data);
+    return <>Default Query Function</>;
+  }
+
+  // Suspense
+  function TestSuspense() {
+    const { reset } = useQueryErrorResetBoundary();
+
+    return (
+      // <QueryErrorResetBoundary>
+      // {({ reset }) => (
+      <ErrorBoundary
+        onReset={reset}
+        fallbackRender={({ resetErrorBoundary }) => (
+          <div>
+            There was an error!
+            <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+          </div>
+        )}
+      >
+        <Suspense fallback='loading...'>
+          <SuspendComponent />
+        </Suspense>
+      </ErrorBoundary>
+      // )}
+      //  </QueryErrorResetBoundary>
+    );
+  }
+
   return (
     <div>
       {/* <TestSetQueryData /> */}
@@ -685,6 +730,9 @@ export default function page() {
       {/* <Filters /> */}
       {/* <FlattenRequestWaterfall id={1} /> */}
       {/* <PrefetchingRouterIntegration /> */}
+      {/* <RenderOptimizations /> */}
+      {/* <DefaultQueryFunction /> */}
+      <TestSuspense />
     </div>
   );
 }
