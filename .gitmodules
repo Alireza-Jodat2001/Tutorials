@@ -1,0 +1,6 @@
+[submodule "ReactQuery_Tutorial"]
+	path = ReactQuery_Tutorial
+	url = https://github.com/Alireza-Jodat2001/ReactQuery_Tutorial.git
+[submodule "Authentication_Tutorial"]
+	path = Authentication_Tutorial
+	url = https://github.com/Alireza-Jodat2001/Authentication_Tutorial.git
