@@ -7,3 +7,6 @@
 [submodule "Express_Tutorial"]
 	path = Express_Tutorial
 	url = https://github.com/Alireza-Jodat2001/Express_Tutorial.git
+[submodule "next_tutorials"]
+	path = next_tutorials
+	url = https://github.com/Alireza-Jodat2001/next_tutorials.git
